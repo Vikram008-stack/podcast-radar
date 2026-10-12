@@ -23,7 +23,7 @@ export default async function SponsorsPage({ searchParams }: { searchParams: Pro
     latest: b.latestPlacement,
     latestLabel: b.latestPlacement ? formatIstShort(b.latestPlacement) : "—",
     inWeek: false,
-    tag: b.confirmed ? undefined : `${b.affiliate ? "Promotion" : "Unverified"}${b.distinctEpisodes >= 2 ? ` · recurring ×${b.distinctEpisodes}` : ""}`,
+    tag: b.confirmed ? undefined : `${b.affiliate ? "Promotion" : "Featured brand"}${b.distinctEpisodes >= 2 ? ` · recurring ×${b.distinctEpisodes}` : ""}`,
     search: `${b.name} ${b.shows.join(" ")}`.toLowerCase(),
     facets: ["all", b.confirmed ? "confirmed" : "unconfirmed"],
   }));
@@ -47,7 +47,7 @@ export default async function SponsorsPage({ searchParams }: { searchParams: Pro
             options: [
               { value: "all", label: "All promotions" },
               { value: "confirmed", label: "Confirmed sponsorships" },
-              { value: "unconfirmed", label: "Promotion & unverified" },
+              { value: "unconfirmed", label: "Promotions & featured brands" },
             ],
           }}
         />

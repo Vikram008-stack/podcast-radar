@@ -30,7 +30,7 @@ export default async function SponsorDetail({ params, searchParams }: { params: 
         <BrandMark name={b.name} huge />
         <div>
           <div className="badge-line">
-            {b.confirmed ? <Badge tone="sage">#{b.rank} confirmed sponsor</Badge> : <Badge tone="blush">{b.affiliate ? "Promotion" : "Unverified"}{b.distinctEpisodes >= 2 ? ` · recurring on ${b.distinctEpisodes} episodes` : ""}</Badge>}
+            {b.confirmed ? <Badge tone="sage">#{b.rank} confirmed sponsor</Badge> : <Badge tone="blush">{b.affiliate ? "Promotion" : "Featured brand"}{b.distinctEpisodes >= 2 ? ` · recurring on ${b.distinctEpisodes} episodes` : ""}</Badge>}
             <Badge tone="neutral">30 days</Badge>
           </div>
           <h1 style={{ marginTop: 12 }}>{b.name}</h1>
@@ -38,7 +38,7 @@ export default async function SponsorDetail({ params, searchParams }: { params: 
           <div className="metric-row detail-metrics">
             <span><strong>{b.confirmed}</strong>confirmed</span>
             <span><strong>{b.affiliate}</strong>promotion</span>
-            <span><strong>{b.probable}</strong>unverified</span>
+            <span><strong>{b.probable}</strong>featured</span>
             <span><strong>{b.distinctShows}</strong>shows</span>
             <span><strong>{b.distinctEpisodes}</strong>episodes</span>
           </div>

@@ -101,7 +101,7 @@ export function classificationReason(cls: SponsorClass, excerpts: string[]): str
   const text = excerpts.join(" ");
   if (cls === "confirmed") return "Paid for sure: the show openly says so (“" + (matchDisclosure(text) ?? "sponsored by") + "”).";
   if (cls === "affiliate") return "Promotion: the show shares a discount code or referral link for this brand, but never says it is a paid sponsor.";
-  if (cls === "probable") return "Not confirmed: the show promotes this brand (for example “Download it here”), but never says it is paid. It might be an ad or just a recommendation.";
+  if (cls === "probable") return "Featured brand: the show recommends this brand (for example “Download it here”), but never says it is paid. It might be an ad or just a recommendation.";
   if (cls === "related_party") return "The show’s own brand, so it is not counted as a sponsor.";
   return "Just mentioned in conversation, not an ad.";
 }

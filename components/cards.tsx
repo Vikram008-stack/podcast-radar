@@ -114,7 +114,7 @@ export function SponsorCard({ s, reportId, rank }: { s: SponsorSignal; reportId?
       <div className="card-body">
         <div className="card-heading">
           <h3><Link className="stretch" href={`/sponsors/${s.id}${q(reportId)}`}>{s.name}</Link></h3>
-          <p>{s.confirmed ? "Confirmed sponsorship" : `${s.affiliate ? "Promotion (code / referral)" : "Unverified promotion"}${s.distinctEpisodes >= 2 ? ` · recurring on ${s.distinctEpisodes} episodes` : ""}`}</p>
+          <p>{s.confirmed ? "Confirmed sponsorship" : `${s.affiliate ? "Promotion (code / referral)" : "Featured brand"}${s.distinctEpisodes >= 2 ? ` · recurring on ${s.distinctEpisodes} episodes` : ""}`}</p>
         </div>
         <div className="metric-row">
           <span><strong>{s.confirmed || s.distinctEpisodes}</strong>{s.confirmed ? "confirmed" : "episodes"}</span>

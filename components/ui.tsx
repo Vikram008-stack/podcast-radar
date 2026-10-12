@@ -183,7 +183,7 @@ export function ChangePill({ change }: { change: number | null }) {
 const CLASS_LABEL = {
   confirmed: ["Confirmed", "sage"],
   affiliate: ["Promotion · code / referral", "sand"],
-  probable: ["Unverified", "blush"],
+  probable: ["Featured brand", "lavender"],
   related_party: ["Related-party", "neutral"],
   organic: ["Organic mention", "neutral"],
 } as const;
