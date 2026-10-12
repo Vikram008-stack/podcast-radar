@@ -64,8 +64,8 @@ export default async function Home() {
       href: `/sponsors/${b.id}`,
       rank: i + 1,
       name: b.name,
-      sub: `${b.distinctShows === 1 ? "1 show" : `${b.distinctShows} shows`}: ${b.shows.join(", ")}${b.latestPlacement ? ` · latest ${formatIstShort(b.latestPlacement)}` : ""}`,
-      cols: [["Sponsored episodes", String(b.confirmed)], ["Promotion episodes", String(b.affiliate)], ["Featured episodes", String(b.probable)]],
+      sub: `${b.distinctShows === 1 ? "1 show" : `${b.distinctShows} shows`}: ${b.shows.join(", ")}`,
+      cols: [["Sponsored episodes", String(b.confirmed)], ["Promoted episodes", String(b.affiliate + b.probable)], ["Latest", b.latestPlacement ? formatIstShort(b.latestPlacement) : "—"]],
       search: `${b.name} ${b.shows.join(" ")}`.toLowerCase(),
     })),
   };
