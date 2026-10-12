@@ -64,8 +64,8 @@ export default async function Home() {
       href: `/sponsors/${b.id}`,
       rank: i + 1,
       name: b.name,
-      sub: b.confirmed ? `Confirmed · ${b.shows.join(", ")}` : `Unconfirmed (${b.affiliate} affiliate, ${b.probable} probable) · ${b.shows.join(", ")}`,
-      cols: [["Shows", String(b.distinctShows)], ["Confirmed", String(b.confirmed)], ["Latest", b.latestPlacement ? formatIstShort(b.latestPlacement) : "—"]],
+      sub: b.confirmed ? `Confirmed · ${b.shows.join(", ")}` : `${b.affiliate ? "Promotion" : "Featured brand"} · ${b.shows.join(", ")}`,
+      cols: [["Shows", String(b.distinctShows)], b.confirmed ? ["Confirmed", String(b.confirmed)] : b.affiliate ? ["Promotion", String(b.affiliate)] : ["Featured brand", String(b.probable)], ["Latest", b.latestPlacement ? formatIstShort(b.latestPlacement) : "—"]],
       search: `${b.name} ${b.shows.join(" ")}`.toLowerCase(),
     })),
   };
