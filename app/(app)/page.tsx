@@ -1,16 +1,15 @@
 import { ArrowRight, CalendarDays, Clock, Hourglass } from "lucide-react";
 import { EmptySlot, GuestCard, OpportunityBanner, SponsorCard, TopicCard } from "@/components/cards";
-import { ImpactTracker } from "@/components/impact-tracker";
 import { SignalsTable, type SignalRow } from "@/components/signals-table";
 import { Badge, Button, EmptyState, RankingMethod, SectionTitle } from "@/components/ui";
 import { topPicks } from "@/lib/top-picks";
-import { getImpact, getReport } from "@/lib/server/data";
+import { getReport } from "@/lib/server/data";
 import { formatIstDate, formatIstShort, formatIstWeekday, formatRange, istParts } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [report, impact] = await Promise.all([getReport(), getImpact()]);
+  const report = await getReport();
   if (!report?.snapshot) {
     return (
       <div className="page">
@@ -106,13 +105,6 @@ export default async function Home() {
       </section>
 
       <section className="content-section overview">
-        <ImpactTracker
-          episodesAnalysed={impact.episodesAnalysed}
-          hoursSaved={impact.hoursSaved}
-          initial={impact.statuses}
-          guests={s.guests.slice(0, 12).map((g) => ({ id: g.id, name: g.name, sub: [g.role, g.company].filter(Boolean).join(" · ") || g.shows.join(", "), href: `/guests/${g.id}` }))}
-          sponsors={[...s.sponsors, ...s.otherBrands].slice(0, 8).map((b) => ({ id: b.id, name: b.name, sub: b.shows.join(", "), href: `/sponsors/${b.id}` }))}
-        />
         <SectionTitle eyebrow="Everything we saw" title="All ranked signals" sub={`${s.stats.episodesIn30d} episodes · ${s.stats.newsArticles} Indian startup news articles · ${s.stats.aiCalls} Gemini calls`} />
         <SignalsTable rows={rows} />
       </section>

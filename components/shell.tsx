@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, ChevronsLeft, ChevronsRight, Eye, Home, LogIn, LogOut, Megaphone, Menu, Radio, Settings, Sparkles, Users, X } from "lucide-react";
+import { CalendarDays, ChevronsLeft, ChevronsRight, Eye, Home, LogIn, LogOut, Megaphone, Menu, Radio, Settings, Sparkles, TrendingUp, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -10,6 +10,7 @@ const NAV = [
   { href: "/guests", label: "Guests", icon: Users },
   { href: "/topics", label: "Topics", icon: Sparkles },
   { href: "/sponsors", label: "Sponsors", icon: Megaphone },
+  { href: "/impact", label: "Impact", icon: TrendingUp },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
