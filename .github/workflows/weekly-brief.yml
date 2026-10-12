@@ -1,0 +1,41 @@
+name: Weekly brief
+
+on:
+  schedule:
+    # Monday 06:00 IST = Monday 00:30 UTC
+    - cron: "30 0 * * 1"
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: "schedule | manual"
+        required: false
+        default: manual
+
+concurrency:
+  group: weekly-brief
+  cancel-in-progress: false
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run weekly pipeline
+        run: npm run pipeline:weekly -- --trigger=${{ github.event_name == 'schedule' && 'schedule' || inputs.trigger || 'manual' }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ALLOWED_EMAIL: ${{ secrets.ALLOWED_EMAIL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          GEMINI_FALLBACK_MODELS: ${{ vars.GEMINI_FALLBACK_MODELS }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+          RAPIDAPI_SPOTIFY_HOST: spotify-scraper.p.rapidapi.com
