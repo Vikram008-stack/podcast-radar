@@ -1,5 +1,6 @@
 import { ArrowRight, CalendarDays, Check, Clock, Hourglass } from "lucide-react";
 import { EmptySlot, GuestCard, OpportunityBanner, SponsorCard, StatusBars, TopicCard } from "@/components/cards";
+import { ImpactTracker } from "@/components/impact-tracker";
 import { SignalsTable, type SignalRow } from "@/components/signals-table";
 import { Badge, Button, EmptyState, RankingMethod, SectionTitle } from "@/components/ui";
 import { topPicks } from "@/lib/top-picks";
@@ -186,19 +187,13 @@ export default async function Home() {
       <section className="content-section overview">
         <SectionTitle eyebrow="Everything we saw" title="All ranked signals" sub={`${s.stats.episodesIn30d} episodes · ${s.stats.newsArticles} Indian startup news articles · ${s.stats.aiCalls} Gemini calls`} />
         <SignalsTable rows={rows} />
-        <div className="panel" style={{ marginTop: 16 }}>
-          <p className="eyebrow">📈 Impact · last 30 days</p>
-          <div className="impact">
-            <div><strong>{impact.episodesAnalysed}</strong><small>episodes analysed for you</small></div>
-            <div><strong>~{impact.hoursSaved}h</strong><small>manual research saved (≈6 min / episode)</small></div>
-            <div><strong>{impact.outreach.sent + impact.outreach.replied + impact.outreach.booked + impact.outreach.declined}</strong><small>guest emails / DMs sent</small></div>
-            <div><strong>{impact.outreach.replied + impact.outreach.booked}</strong><small>guest replies</small></div>
-            <div><strong>{impact.outreach.booked}</strong><small>🎉 guests booked</small></div>
-            <div><strong>{impact.pitches.sent + impact.pitches.replied + impact.pitches.booked}</strong><small>sponsor pitches sent</small></div>
-            <div><strong>{impact.pitches.booked}</strong><small>sponsors signed</small></div>
-          </div>
-          <small style={{ color: "var(--muted)", fontSize: 12 }}>Mark each draft Sent / Replied / Booked on the guest or sponsor page — these numbers update instantly.</small>
-        </div>
+        <ImpactTracker
+          episodesAnalysed={impact.episodesAnalysed}
+          hoursSaved={impact.hoursSaved}
+          initial={impact.statuses}
+          guests={s.guests.slice(0, 12).map((g) => ({ id: g.id, name: g.name, sub: [g.role, g.company].filter(Boolean).join(" · ") || g.shows.join(", "), href: `/guests/${g.id}` }))}
+          sponsors={[...s.sponsors, ...s.otherBrands].slice(0, 8).map((b) => ({ id: b.id, name: b.name, sub: b.shows.join(", "), href: `/sponsors/${b.id}` }))}
+        />
         {s.notes.length ? (
           <div className="panel" style={{ marginTop: 16 }}>
             <p className="eyebrow">Run notes</p>

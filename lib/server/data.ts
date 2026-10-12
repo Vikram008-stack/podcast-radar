@@ -134,6 +134,8 @@ export type Impact = {
   hoursSaved: number;
   outreach: Record<"draft" | "sent" | "replied" | "booked" | "declined", number>;
   pitches: Record<"draft" | "sent" | "replied" | "booked" | "declined", number>;
+  /** status per draft, key = `${kind}:${targetId}` */
+  statuses: Record<string, "draft" | "sent" | "replied" | "booked" | "declined">;
 };
 
 /** Impact over the last 30 days: work the radar did + what happened to outreach (Aditya's own tracking). */
@@ -142,13 +144,17 @@ export async function getImpact(): Promise<Impact> {
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
   const [eps, drafts] = await Promise.all([
     sb.from("episodes").select("id", { count: "exact", head: true }).eq("owner_id", owner).eq("is_sample", false).eq("extraction_status", "done").gte("published_at", since),
-    sb.from("drafts").select("kind,status").eq("owner_id", owner),
+    sb.from("drafts").select("kind,status,target_id").eq("owner_id", owner),
   ]);
   const blank = () => ({ draft: 0, sent: 0, replied: 0, booked: 0, declined: 0 });
   const outreach = blank();
   const pitches = blank();
-  for (const d of (drafts.data ?? []) as { kind: string; status: keyof ReturnType<typeof blank> }[]) (d.kind === "pitch" ? pitches : outreach)[d.status ?? "draft"]++;
+  const statuses: Impact["statuses"] = {};
+  for (const d of (drafts.data ?? []) as { kind: string; status: keyof ReturnType<typeof blank>; target_id: string }[]) {
+    (d.kind === "pitch" ? pitches : outreach)[d.status ?? "draft"]++;
+    statuses[`${d.kind}:${d.target_id}`] = d.status ?? "draft";
+  }
   const episodesAnalysed = eps.count ?? 0;
   // ~6 min per episode to skim notes for guests, topics and sponsors by hand
-  return { episodesAnalysed, hoursSaved: Math.round((episodesAnalysed * 6) / 6) / 10, outreach, pitches };
+  return { episodesAnalysed, hoursSaved: Math.round((episodesAnalysed * 6) / 6) / 10, outreach, pitches, statuses };
 }

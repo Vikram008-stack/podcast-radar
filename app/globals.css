@@ -489,3 +489,15 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 .impact div { padding: 12px; border-radius: 12px; background: #f6f3ee; }
 .impact strong { display: block; font-size: 22px; letter-spacing: -.03em; }
 .impact small { color: var(--muted); font-size: 12px; }
+
+/* impact tiles + inline tracker */
+.impact-tile { display: block; padding: 12px; border-radius: 12px; background: #f6f3ee; transition: background .2s, transform .2s; }
+.impact-tile:hover { background: var(--lavender); transform: translateY(-2px); }
+.impact-tile strong { display: block; font-size: 22px; letter-spacing: -.03em; }
+.impact-tile small { color: var(--muted); font-size: 12px; }
+.track-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line); }
+.track-name { min-width: 0; }
+.track-name strong { display: block; font-size: 14px; }
+.track-name small { display: block; color: var(--muted); font-size: 12px; }
+.track-name:hover strong { text-decoration: underline; text-decoration-color: #cfc2d8; }
+.track-row .status-track { margin: 0; }
