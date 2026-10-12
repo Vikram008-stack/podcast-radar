@@ -194,16 +194,6 @@ export default async function Home() {
           guests={s.guests.slice(0, 12).map((g) => ({ id: g.id, name: g.name, sub: [g.role, g.company].filter(Boolean).join(" · ") || g.shows.join(", "), href: `/guests/${g.id}` }))}
           sponsors={[...s.sponsors, ...s.otherBrands].slice(0, 8).map((b) => ({ id: b.id, name: b.name, sub: b.shows.join(", "), href: `/sponsors/${b.id}` }))}
         />
-        {s.notes.length ? (
-          <div className="panel" style={{ marginTop: 16 }}>
-            <p className="eyebrow">Run notes</p>
-            <ul style={{ margin: 0, paddingLeft: 18, color: "var(--muted)", fontSize: 13, lineHeight: 1.7 }}>
-              {s.notes.map((n, i) => (
-                <li key={i}>{n}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
       </section>
     </div>
   );
