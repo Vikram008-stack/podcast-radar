@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Repeat2, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Avatar, Badge, ChangePill } from "./ui";
@@ -25,7 +25,7 @@ export type DirItem = {
   group?: string;
 };
 
-export type DirGroup = { key: string; label: string; note: string; empty: string };
+export type DirGroup = { key: string; label: string; note: string; empty: string; icon?: "rounds" | "single" };
 
 export function Directory({
   items,
@@ -75,6 +75,7 @@ export function Directory({
             return (
               <section key={g.key} style={{ marginBottom: 28 }}>
                 <h2 style={{ fontSize: 19, margin: "0 0 4px", letterSpacing: "-.02em" }}>
+                  {g.icon === "rounds" ? <Repeat2 size={18} className="group-icon" aria-hidden /> : g.icon === "single" ? <UserRound size={18} className="group-icon" aria-hidden /> : null}
                   {g.label} <span style={{ color: "var(--muted)", fontWeight: 500 }}>· {inGroup.length}</span>
                 </h2>
                 <p style={{ margin: "0 0 12px", color: "var(--muted)", fontSize: 13 }}>{g.note}</p>

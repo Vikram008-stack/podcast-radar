@@ -1,8 +1,8 @@
 import { Directory, type DirGroup, type DirItem } from "@/components/directory";
 
 const GUEST_GROUPS: DirGroup[] = [
-  { key: "multi", label: "🔥 Doing media rounds", note: "Founders seen on 2 or more monitored shows in the last 30 days — easiest to book now.", empty: "No founder appeared on 2+ monitored shows in the last 30 days. Counts are never padded." },
-  { key: "single", label: "Single-show founders", note: "Seen on one monitored show — good fallbacks, ranked by recency.", empty: "No single-show founders in this window." },
+  { key: "multi", label: "Doing media rounds", icon: "rounds", note: "Founders seen on 2 or more monitored shows in the last 30 days — easiest to book now.", empty: "No founder appeared on 2+ monitored shows in the last 30 days. Counts are never padded." },
+  { key: "single", label: "Single-show founders", icon: "single", note: "Seen on one monitored show — good fallbacks, ranked by recency.", empty: "No single-show founders in this window." },
 ];
 import { EmptyState, RankingMethod } from "@/components/ui";
 import { getReport } from "@/lib/server/data";

@@ -530,3 +530,5 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 .impact-col .status-track { gap: 4px; }
 .impact-col .status-track button { padding: 3px 8px; font-size: 11px; }
 @media (max-width: 1100px) { .impact-cols { grid-template-columns: 1fr; } .impact-scroll { max-height: none; } }
+
+.group-icon { display: inline-block; vertical-align: -3px; margin-right: 6px; color: var(--lavender-deep); }
