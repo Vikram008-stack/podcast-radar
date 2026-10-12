@@ -1,5 +1,5 @@
-import { ArrowRight, CalendarDays, Check, Clock, Hourglass } from "lucide-react";
-import { EmptySlot, GuestCard, OpportunityBanner, SponsorCard, StatusBars, TopicCard } from "@/components/cards";
+import { ArrowRight, CalendarDays, Clock, Hourglass } from "lucide-react";
+import { EmptySlot, GuestCard, OpportunityBanner, SponsorCard, TopicCard } from "@/components/cards";
 import { ImpactTracker } from "@/components/impact-tracker";
 import { SignalsTable, type SignalRow } from "@/components/signals-table";
 import { Badge, Button, EmptyState, RankingMethod, SectionTitle } from "@/components/ui";
@@ -40,7 +40,6 @@ export default async function Home() {
   const p = istParts(gen);
   const updated = `Updated ${formatIstWeekday(gen)} · ${String(p.hour).padStart(2, "0")}:${String(p.minute).padStart(2, "0")} IST`;
   const building = report.status !== "ready";
-  const bad = s.sources.filter((x) => x.status === "failed" || x.status === "needs_attention").length;
 
   const rows: Record<"guests" | "topics" | "sponsors", SignalRow[]> = {
     guests: s.guests.map((g) => ({
@@ -100,32 +99,22 @@ export default async function Home() {
               <Clock size={14} aria-hidden /> {updated}
             </span>
             <span>
-              {s.stats.episodesIn30d} episodes in 30 days · {s.stats.audioAnalysed} openings heard
+              {s.stats.episodesIn30d} episodes from {s.sources.filter((x) => x.status !== "inactive").length} shows in the last 30 days
             </span>
           </div>
         </div>
-        <aside className="status-card" aria-label="Collection status">
-          <div className="status-head">
-            <span className="status-icon">
-              <Check size={18} aria-hidden />
-            </span>
-            <div>
-              <strong>{building ? "Weekly scan in progress" : bad ? "Weekly scan finished with gaps" : "Weekly scan complete"}</strong>
-              <small>
-                {s.sourcesCollected} of {s.sourcesTotal} sources collected
-              </small>
-            </div>
-          </div>
-          <StatusBars sources={s.sources} />
-          <div className="status-legend">
-            <span><i style={{ background: "#9db39a" }} />ok</span>
-            <span><i style={{ background: "#d6b27a" }} />partial</span>
-            <span><i style={{ background: "#d99894" }} />failed</span>
-          </div>
-          <Button href="/reports" variant="primary">
-            View weekly brief <ArrowRight size={14} />
-          </Button>
-        </aside>
+      </section>
+
+      <section className="content-section overview">
+        <ImpactTracker
+          episodesAnalysed={impact.episodesAnalysed}
+          hoursSaved={impact.hoursSaved}
+          initial={impact.statuses}
+          guests={s.guests.slice(0, 12).map((g) => ({ id: g.id, name: g.name, sub: [g.role, g.company].filter(Boolean).join(" · ") || g.shows.join(", "), href: `/guests/${g.id}` }))}
+          sponsors={[...s.sponsors, ...s.otherBrands].slice(0, 8).map((b) => ({ id: b.id, name: b.name, sub: b.shows.join(", "), href: `/sponsors/${b.id}` }))}
+        />
+        <SectionTitle eyebrow="Everything we saw" title="All ranked signals" sub={`${s.stats.episodesIn30d} episodes · ${s.stats.newsArticles} Indian startup news articles · ${s.stats.aiCalls} Gemini calls`} />
+        <SignalsTable rows={rows} />
       </section>
 
       <section className="content-section">
@@ -183,18 +172,6 @@ export default async function Home() {
       </section>
 
       <OpportunityBanner o={picks.opportunity} reportId={rid} />
-
-      <section className="content-section overview">
-        <SectionTitle eyebrow="Everything we saw" title="All ranked signals" sub={`${s.stats.episodesIn30d} episodes · ${s.stats.newsArticles} Indian startup news articles · ${s.stats.aiCalls} Gemini calls`} />
-        <SignalsTable rows={rows} />
-        <ImpactTracker
-          episodesAnalysed={impact.episodesAnalysed}
-          hoursSaved={impact.hoursSaved}
-          initial={impact.statuses}
-          guests={s.guests.slice(0, 12).map((g) => ({ id: g.id, name: g.name, sub: [g.role, g.company].filter(Boolean).join(" · ") || g.shows.join(", "), href: `/guests/${g.id}` }))}
-          sponsors={[...s.sponsors, ...s.otherBrands].slice(0, 8).map((b) => ({ id: b.id, name: b.name, sub: b.shows.join(", "), href: `/sponsors/${b.id}` }))}
-        />
-      </section>
     </div>
   );
 }
