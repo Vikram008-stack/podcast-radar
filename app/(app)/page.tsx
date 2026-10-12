@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, Clock, Hourglass } from "lucide-react";
+import { ArrowRight, Banknote, CalendarDays, Clock, Flame, Hourglass, Mic } from "lucide-react";
 import { EmptySlot, GuestCard, OpportunityBanner, SponsorCard, TopicCard } from "@/components/cards";
 import { SignalsTable, type SignalRow } from "@/components/signals-table";
 import { Badge, Button, EmptyState, RankingMethod, SectionTitle } from "@/components/ui";
@@ -102,12 +102,12 @@ export default async function Home() {
         <aside className="glance" aria-label="This week at a glance">
           <p className="eyebrow" style={{ margin: 0 }}>✨ This week at a glance</p>
           {[
-            ["🎙️", "Top founder", picks.guests[0]?.name, picks.guests[0] ? `/guests/${picks.guests[0].id}` : "/guests", picks.guests[0]?.company],
-            ["🔥", "Hot topic", picks.topics[0]?.name, picks.topics[0] ? `/topics/${picks.topics[0].id}` : "/topics", picks.topics[0] ? `${picks.topics[0].distinctShows} shows · ${picks.topics[0].episodes} episodes` : null],
-            ["💸", "Top brand", picks.sponsors[0]?.name, picks.sponsors[0] ? `/sponsors/${picks.sponsors[0].id}` : "/sponsors", picks.sponsors[0]?.confirmed ? "confirmed sponsor" : "featured brand"],
+            [<Mic key="m" size={17} strokeWidth={1.8} />, "Top founder", picks.guests[0]?.name, picks.guests[0] ? `/guests/${picks.guests[0].id}` : "/guests", picks.guests[0]?.company],
+            [<Flame key="f" size={17} strokeWidth={1.8} />, "Hot topic", picks.topics[0]?.name, picks.topics[0] ? `/topics/${picks.topics[0].id}` : "/topics", picks.topics[0] ? `${picks.topics[0].distinctShows} shows · ${picks.topics[0].episodes} episodes` : null],
+            [<Banknote key="b" size={17} strokeWidth={1.8} />, "Top brand", picks.sponsors[0]?.name, picks.sponsors[0] ? `/sponsors/${picks.sponsors[0].id}` : "/sponsors", picks.sponsors[0]?.confirmed ? "confirmed sponsor" : "featured brand"],
           ].map(([emoji, label, name, href, sub]) => (
             <a key={label as string} href={href as string} className="glance-row">
-              <span className="glance-emoji" aria-hidden>{emoji}</span>
+              <span className="glance-emoji" aria-hidden>{emoji as React.ReactNode}</span>
               <span style={{ minWidth: 0 }}>
                 <small>{label}</small>
                 <strong>{(name as string) ?? "—"}</strong>

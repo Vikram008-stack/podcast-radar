@@ -535,3 +535,5 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 
 .listen-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 12px; max-width: 220px; }
 @media (max-width: 760px) { .listen-links { justify-content: flex-start; max-width: none; } }
+
+.glance-emoji { color: var(--lavender-deep); border: 1px solid #e3d9ec; }
