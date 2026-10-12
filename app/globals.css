@@ -476,3 +476,6 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 .health-chips span.warn { background: var(--sand); color: #7a5d2c; }
 .health-chips span.bad { background: var(--blush); color: #7c5558; }
 @media (max-width: 760px) { .health-chips { padding-left: 0; } }
+
+.paused-note { display: block; margin: 8px 0 0 56px; padding: 6px 10px; border-radius: 10px; background: #f6f3ee; color: #5f5a62; font-size: 12px; line-height: 1.5; }
+@media (max-width: 760px) { .paused-note { margin-left: 0; } }

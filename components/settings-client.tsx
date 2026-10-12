@@ -7,6 +7,13 @@ import type { IntegrationStatus } from "@/lib/env";
 import { formatIst, formatIstDate } from "@/lib/time";
 
 const DAY = 86_400_000;
+/** Why a show is disabled, from its validation note (e.g. paused shows swapped out on 12 Oct 2026). */
+function pausedReason(detail: string | null): string {
+  const d = detail ?? "";
+  const replaced = /replaced by ([^·]+)/i.exec(d)?.[1]?.trim();
+  if (/paused show/i.test(d)) return `Paused: no full episode in the last 35 days, so it was disabled on 12 Oct 2026${replaced ? ` and replaced by ${replaced}` : ""}.`;
+  return "Disabled: not monitored in weekly scans.";
+}
 function ago(iso: string) {
   const h = Math.round((Date.now() - Date.parse(iso)) / 3_600_000);
   return h < 1 ? "just now" : h < 48 ? `${h}h ago` : `${Math.round(h / 24)}d ago`;
@@ -409,6 +416,11 @@ function SourceRow({ p, busy, run, canEdit }: { p: PodcastView; busy: string | n
         <span title="Newest episode collected" className={freshClass(p.health?.newest)}>🕒 newest {p.health?.newest ? formatIstDate(p.health.newest) : "none in 30 days"}</span>
         <span title="Last successful fetch" className={staleFetch(p.last_success_at) ? "warn" : ""}>🔄 fetched {p.last_success_at ? ago(p.last_success_at) : "never"}</span>
       </div>
+      {!p.active ? (
+        <small className="paused-note">
+          ⏸️ {pausedReason(p.validation_detail)} Toggle it on to monitor again — the next weekly run picks it up.
+        </small>
+      ) : null}
       {p.last_error ? <small style={{ display: "block", marginTop: 6, color: "#8a5a2c", fontSize: 12 }}>Last error: {p.last_error}</small> : null}
       {open ? (
         <div className="source-edit">
