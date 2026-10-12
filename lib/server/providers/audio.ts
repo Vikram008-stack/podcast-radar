@@ -35,30 +35,46 @@ export async function clipOpening(url: string, minutes: number, timeoutMs = 240_
   const out = join(dir, "clip.mp3");
   const cleanup = () => rm(dir, { recursive: true, force: true });
   try {
+    // Node fetches the enclosure and pipes it into ffmpeg's stdin: static ffmpeg builds often can't
+    // resolve hostnames on Linux (GitHub runners, Vercel), so ffmpeg never touches the network.
+    // The download is aborted as soon as ffmpeg has the opening it needs.
+    const ctrl = new AbortController();
+    const res = await fetch(url, { headers: { "user-agent": "PodcastEcosystemRadar/1.0" }, redirect: "follow", signal: ctrl.signal });
+    if (!res.ok || !res.body) throw new Error(`enclosure responded ${res.status}`);
     await new Promise<void>((resolve, reject) => {
-      const args = [
-        "-hide_banner", "-loglevel", "error", "-nostdin",
-        "-user_agent", "PodcastEcosystemRadar/1.0",
-        "-t", String(minutes * 60),
-        "-i", url,
-        "-vn", "-ac", "1", "-ar", "16000", "-b:a", "32k",
-        "-f", "mp3", "-y", out,
-      ];
-      const p = spawn(FFMPEG, args, { stdio: ["ignore", "ignore", "pipe"] });
+      const args = ["-hide_banner", "-loglevel", "error", "-i", "pipe:0", "-t", String(minutes * 60), "-vn", "-ac", "1", "-ar", "16000", "-b:a", "32k", "-f", "mp3", "-y", out];
+      const p = spawn(FFMPEG, args, { stdio: ["pipe", "ignore", "pipe"] });
       let err = "";
-      p.stderr.on("data", (d) => (err += String(d)).slice(-2000));
+      p.stderr.on("data", (d) => (err = (err + String(d)).slice(-2000)));
+      p.stdin.on("error", () => {}); // EPIPE once ffmpeg has enough — expected
       const timer = setTimeout(() => {
+        ctrl.abort();
         p.kill("SIGKILL");
         reject(new Error("ffmpeg timed out"));
       }, timeoutMs);
+      (async () => {
+        try {
+          const reader = res.body!.getReader();
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done || p.exitCode !== null || p.stdin.destroyed) break;
+            if (!p.stdin.write(value)) await new Promise((r) => p.stdin.once("drain", r));
+          }
+        } catch {
+          // aborted after ffmpeg finished — expected
+        } finally {
+          p.stdin.end();
+        }
+      })();
       p.on("error", (e) => {
         clearTimeout(timer);
         reject(new Error(`ffmpeg not available: ${e.message}`));
       });
-      p.on("exit", (code) => {
+      p.on("close", (code, signal) => {
         clearTimeout(timer);
+        ctrl.abort(); // stop downloading the rest of the episode
         if (code === 0) resolve();
-        else reject(new Error(`ffmpeg exited ${code}: ${err.trim().slice(0, 200)}`));
+        else reject(new Error(`ffmpeg exited ${code ?? signal}: ${err.trim().slice(0, 200)}`));
       });
     });
     const { size } = await stat(out);
