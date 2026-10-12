@@ -7,6 +7,8 @@ import { AiLabel, Badge, ClaimList, ClassBadge, EvidenceList, ObservedLabel, Sou
 import { sponsorTemplates } from "@/lib/outreach-templates";
 import { classificationReason } from "@/lib/sponsors";
 import { getDraft, getReport, requirePageViewer } from "@/lib/server/data";
+import { listenLinks } from "@/lib/server/episode-links";
+
 import { formatIst, formatIstDate } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +21,7 @@ export default async function SponsorDetail({ params, searchParams }: { params: 
   if (!report || !s || !b) notFound();
   const viewer = await requirePageViewer();
   const draft = await getDraft("pitch", b.id);
+  const listen = await listenLinks(b.placements.map((p) => p.episode));
   const sources = new Map(b.placements.map((p) => [`ep:${p.episode.id}`, { label: `${p.episode.podcastName}: ${p.episode.title}`, url: p.episode.url }]));
 
   return (
@@ -77,7 +80,11 @@ export default async function SponsorDetail({ params, searchParams }: { params: 
                   ) : (
                     <span>No public YouTube stats for this episode</span>
                   )}
-                  <SourceLink href={p.episode.url}>Episode</SourceLink>
+                  {(listen[p.episode.id] ?? []).map((l) => (
+                    <SourceLink key={l.label} href={l.url}>
+                      {l.label}
+                    </SourceLink>
+                  ))}
                 </div>
               </div>
             ))}

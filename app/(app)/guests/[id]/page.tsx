@@ -5,6 +5,8 @@ import { DraftEditor } from "@/components/draft-editor";
 import { AiLabel, Artwork, Avatar, Badge, ClaimList, EmptyState, EvidenceIcon, ObservedLabel, SourceLink, evidenceCaption, LockedPanel } from "@/components/ui";
 import { guestTemplates, linkLabel, linkedinSearchUrl } from "@/lib/outreach-templates";
 import { getDraft, getReport, requirePageViewer } from "@/lib/server/data";
+import { listenLinks } from "@/lib/server/episode-links";
+
 import { formatIstDate } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +18,7 @@ export default async function GuestDetail({ params, searchParams }: { params: Pr
   if (!report || !g) notFound();
   const viewer = await requirePageViewer();
   const draft = await getDraft("outreach", g.id);
+  const listen = await listenLinks(g.history.map((h) => h.episode));
   const sources = new Map(g.history.map((h) => [`ep:${h.episode.id}`, { label: `${h.episode.podcastName}: ${h.episode.title}`, url: h.evidence.url ?? h.episode.url }]));
   const stated = g.history.find((h) => h.roleAsStated);
 
@@ -63,9 +66,9 @@ export default async function GuestDetail({ params, searchParams }: { params: Pr
                   </p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 8 }}>
                     <SourceLink href={h.evidence.url ?? h.episode.url}>Evidence</SourceLink>
-                    {h.episode.links.map((l) => (
-                      <SourceLink key={l.url} href={l.url}>
-                        {l.provider === "rss" ? "Episode page" : l.provider === "youtube" ? "YouTube" : "Spotify"}
+                    {(listen[h.episode.id] ?? []).map((l) => (
+                      <SourceLink key={l.label} href={l.url}>
+                        {l.label}
                       </SourceLink>
                     ))}
                   </div>

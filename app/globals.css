@@ -532,3 +532,6 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 @media (max-width: 1100px) { .impact-cols { grid-template-columns: 1fr; } .impact-scroll { max-height: none; } }
 
 .group-icon { display: inline-block; vertical-align: -3px; margin-right: 6px; color: var(--lavender-deep); }
+
+.listen-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 12px; max-width: 220px; }
+@media (max-width: 760px) { .listen-links { justify-content: flex-start; max-width: none; } }

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AiLabel, Artwork, Badge, ChangePill, ClaimList, ObservedLabel, SourceLink, fmtNum } from "@/components/ui";
 import { getReport } from "@/lib/server/data";
+import { listenLinks } from "@/lib/server/episode-links";
+
 import { observedSwot } from "@/lib/swot";
 
 const SWOT_KEYS = [
@@ -27,6 +29,7 @@ export default async function TopicDetail({ params, searchParams }: { params: Pr
   ]);
   const cover = t.referenceEpisodes.find((e) => e.thumbnail)?.thumbnail;
   const hasAudience = t.audienceResponse.length > 0;
+  const listen = await listenLinks(t.referenceEpisodes);
   const basic = observedSwot(t);
 
   return (
@@ -68,7 +71,13 @@ export default async function TopicDetail({ params, searchParams }: { params: Pr
                     {e.podcastName} · {formatIstDate(e.publishedAt)}
                   </small>
                 </div>
-                <SourceLink href={e.url}>Listen</SourceLink>
+                <div className="listen-links">
+                  {(listen[e.id] ?? []).map((l) => (
+                    <SourceLink key={l.label} href={l.url}>
+                      {l.label}
+                    </SourceLink>
+                  ))}
+                </div>
               </div>
             ))}
           </section>
