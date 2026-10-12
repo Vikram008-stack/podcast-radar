@@ -67,7 +67,7 @@ export function Shell({ children, scan, period, sample, initialCollapsed, signed
             {collapsed ? <ChevronsRight size={17} /> : <ChevronsLeft size={17} />}
             <span className="label">Collapse</span>
           </button>
-          <Link href="/settings#runs" className="weekly-pill" title={`${scan.label} · ${scan.when}`}>
+          <Link href="/settings" className="weekly-pill" title={`${scan.label} · ${scan.when}`}>
             <span className={`pulse ${dot} ${scan.status === "running" ? "live" : ""}`} aria-hidden />
             <span className="label-wrap">
               <strong>{scan.label}</strong>

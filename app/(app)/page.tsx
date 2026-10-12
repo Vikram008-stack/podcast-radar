@@ -23,7 +23,7 @@ export default async function Home() {
             <p>Your first brief appears after the first scan. Scans run every Monday at 06:00 IST, or start one now.</p>
           </div>
         </section>
-        <EmptyState title="No brief yet" action={<Button href="/settings#runs" variant="primary">Run the first scan</Button>}>
+        <EmptyState title="No brief yet" action={<Button href="/settings" variant="primary">Run the first scan</Button>}>
           Configure your shows in Settings, then run a scan. Nothing here is ever filled with demo data.
         </EmptyState>
       </div>

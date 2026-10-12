@@ -1,9 +1,8 @@
 "use client";
 
-import { Activity, CalendarClock, CheckCircle2, ChevronDown, ChevronUp, KeyRound, Loader2, Lock, Play, Plus, Radio, RefreshCw, Search, ShieldCheck, Trash2 } from "lucide-react";
+import { CalendarClock, CheckCircle2, ChevronDown, ChevronUp, Loader2, Lock, Play, Plus, Radio, RefreshCw, Search, ShieldCheck, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { IntegrationStatus } from "@/lib/env";
 import { formatIst, formatIstDate } from "@/lib/time";
 
 const DAY = 86_400_000;
@@ -76,7 +75,7 @@ async function api<T>(url: string, init?: RequestInit): Promise<T> {
 const csv = (xs: string[]) => xs.join(", ");
 const uncsv = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
-export function SettingsClient({ podcasts, settings, jobs, integrations, now, canEdit }: { podcasts: PodcastView[]; settings: Settings; jobs: JobView[]; integrations: IntegrationStatus[]; now: number; canEdit: boolean }) {
+export function SettingsClient({ podcasts, settings, jobs, now, canEdit }: { podcasts: PodcastView[]; settings: Settings; jobs: JobView[]; now: number; canEdit: boolean }) {
   const router = useRouter();
   const [toast, setToast] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -159,49 +158,6 @@ export function SettingsClient({ podcasts, settings, jobs, integrations, now, ca
             )}
           </section>
 
-          <section className="settings-card" id="runs">
-            <span className="mini-icon">
-              <Activity size={18} />
-            </span>
-            <h2>Collection health</h2>
-            {jobs.length === 0 ? <p>No scans yet.</p> : null}
-            {jobs.map((j) => (
-              <div key={j.id} className="health-row">
-                <span className={`health-dot ${j.status === "succeeded" ? "" : j.status === "partial" || j.status === "running" ? "amber" : "red"}`} />
-                <div style={{ minWidth: 0 }}>
-                  <strong>
-                    {j.type === "weekly" ? `Weekly scan · ${j.period_key ?? ""}` : j.type.replace("_", " ")} — {j.status}
-                  </strong>
-                  <small>
-                    {j.trigger} · {formatIst(j.started_at)}
-                    {j.provider_calls
-                      ? ` · YouTube ${j.provider_calls.youtube_units ?? 0}u · Spotify ${j.provider_calls.rapidapi_requests ?? 0} req · Gemini ${j.provider_calls.gemini_calls ?? 0} calls`
-                      : ""}
-                  </small>
-                  {j.error_summary ? <small style={{ color: "#8a5a2c" }}>{j.error_summary.slice(0, 220)}</small> : null}
-                </div>
-              </div>
-            ))}
-          </section>
-
-          <section className="settings-card">
-            <span className="mini-icon">
-              <KeyRound size={18} />
-            </span>
-            <h2>Integration status</h2>
-            <p>Which keys are configured on the server. Values are never shown.</p>
-            {integrations.map((i) => (
-              <div key={i.key} className="health-row">
-                <span className={`health-dot ${i.configured ? "" : "grey"}`} />
-                <div>
-                  <strong>
-                    {i.label} {i.configured ? <Badge tone="sage">Configured</Badge> : <Badge tone="neutral">Missing</Badge>}
-                  </strong>
-                  <small>{i.note}</small>
-                </div>
-              </div>
-            ))}
-          </section>
 
           <section className="settings-card" id="method">
             <span className="mini-icon">

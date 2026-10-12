@@ -96,12 +96,12 @@ export function strongest(a: SponsorClass, b: SponsorClass): SponsorClass {
   return RANK[a] >= RANK[b] ? a : b;
 }
 
-/** Human-readable reason for a placement's class, derived from the stored evidence. */
+/** Plain-language reason for a placement's label, derived from the stored evidence. */
 export function classificationReason(cls: SponsorClass, excerpts: string[]): string {
   const text = excerpts.join(" ");
-  if (cls === "confirmed") return "Confirmed — disclosure phrase “" + (matchDisclosure(text) ?? "sponsored by") + "” in the evidence.";
-  if (cls === "affiliate") return "Promotion — " + (matchAffiliate(text) ?? "promo code / referral link") + " for the brand, but no sponsor disclosure.";
-  if (cls === "probable") return "Unverified — promotional copy for the brand without a disclosure phrase or code; could be organic or paid.";
-  if (cls === "related_party") return "Related-party — the show’s own brand; excluded from rankings.";
-  return "Organic mention.";
+  if (cls === "confirmed") return "Paid for sure: the show openly says so (“" + (matchDisclosure(text) ?? "sponsored by") + "”).";
+  if (cls === "affiliate") return "Promotion: the show shares a discount code or referral link for this brand, but never says it is a paid sponsor.";
+  if (cls === "probable") return "Not confirmed: the show promotes this brand (for example “Download it here”), but never says it is paid. It might be an ad or just a recommendation.";
+  if (cls === "related_party") return "The show’s own brand, so it is not counted as a sponsor.";
+  return "Just mentioned in conversation, not an ad.";
 }
