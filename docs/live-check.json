@@ -1,0 +1,153 @@
+{
+  "base": "https://podcast-ecosystem-radar.vercel.app",
+  "at": "2026-10-11T13:19:30.068Z",
+  "results": [
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /",
+      "ok": true,
+      "detail": "200 · 98 KB",
+      "ms": 7888
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /guests",
+      "ok": true,
+      "detail": "200 · 60 KB",
+      "ms": 2265
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /topics",
+      "ok": true,
+      "detail": "200 · 35 KB",
+      "ms": 2176
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /sponsors",
+      "ok": true,
+      "detail": "200 · 28 KB",
+      "ms": 4437
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /reports",
+      "ok": true,
+      "detail": "200 · 20 KB",
+      "ms": 3305
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /settings",
+      "ok": true,
+      "detail": "200 · 39 KB",
+      "ms": 2782
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /login",
+      "ok": true,
+      "detail": "200 · 9 KB",
+      "ms": 1538
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "Guest / topic / sponsor detail pages",
+      "ok": true,
+      "detail": "3 detail pages 200 · unknown id 404",
+      "ms": 18990
+    },
+    {
+      "component": "Web app (Vercel)",
+      "check": "GET /api/health",
+      "ok": true,
+      "detail": "DB reachable · 6/6 integrations configured",
+      "ms": 1374
+    },
+    {
+      "component": "Auth & security",
+      "check": "Writes need sign-in",
+      "ok": true,
+      "detail": "add show / run scan / AI draft → 401 when signed out",
+      "ms": 3395
+    },
+    {
+      "component": "Auth & security",
+      "check": "Cron secret enforced",
+      "ok": true,
+      "detail": "no secret → 401 · with secret → 200 (keep-alive, catch-up: brief ready)",
+      "ms": 5494
+    },
+    {
+      "component": "Auth & security",
+      "check": "Magic-link endpoint",
+      "ok": true,
+      "detail": "other emails get the same response, no link sent",
+      "ms": 1766
+    },
+    {
+      "component": "Supabase (DB + RLS)",
+      "check": "Anonymous key sees no rows",
+      "ok": true,
+      "detail": "podcasts, reports, drafts, episodes → 0 rows (RLS)",
+      "ms": 10638
+    },
+    {
+      "component": "Supabase (DB + RLS)",
+      "check": "Data present",
+      "ok": true,
+      "detail": "10 shows · 54 episodes · 43 guests · 10 brands · 95 news · 2 reports",
+      "ms": 5456
+    },
+    {
+      "component": "RSS feeds",
+      "check": "The Neon Show feed",
+      "ok": true,
+      "detail": "398 items · latest 2026-10-09 · audio enclosure yes",
+      "ms": 5497
+    },
+    {
+      "component": "YouTube Data API",
+      "check": "channels.list + playlistItems + videos",
+      "ok": true,
+      "detail": "Founder Thesis with Akshay Datt · 10 uploads in 14 days · 3 units",
+      "ms": 3506
+    },
+    {
+      "component": "Spotify Scraper (RapidAPI)",
+      "check": "/v1/podcast/episodes",
+      "ok": true,
+      "detail": "100 episodes with descriptions · 1 request",
+      "ms": 6086
+    },
+    {
+      "component": "Apple Podcasts lookup",
+      "check": "search 'Founder Thesis'",
+      "ok": true,
+      "detail": "Founder Thesis → https://feeds.zencastr.com/f/mbqvPYFP.rss",
+      "ms": 1884
+    },
+    {
+      "component": "News feeds",
+      "check": "Inc42 · YourStory · Entrackr",
+      "ok": true,
+      "detail": "Inc42 24 · YourStory 20 · Entrackr 50",
+      "ms": 815
+    },
+    {
+      "component": "Gemini Flash",
+      "check": "structured JSON call",
+      "ok": true,
+      "detail": "ok via gemini-3.7-flash",
+      "ms": 18798
+    },
+    {
+      "component": "Weekly pipeline",
+      "check": "Latest brief + last job",
+      "ok": true,
+      "detail": "Issue 1 (ready) week of 2026-09-28 · last job partial · Gemini calls 39",
+      "ms": 580
+    }
+  ]
+}

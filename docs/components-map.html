@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Podcast Radar Components Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root { --mint: #e3f1e8; --ink: #1f1f1f; --line: #2b2b2b; --grid: #cfcfcf; --dot: #5f8f78; --muted: #555; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--mint); font-family: Inter, Arial, sans-serif; color: var(--ink); }
+  .sheet { width: 1560px; margin: 0 auto; padding: 28px 30px 30px; }
+  .card { background: #fff; border-radius: 14px; padding: 26px 30px 22px; position: relative; }
+  h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: .02em; }
+  .sub { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .board { position: relative; width: 1440px; height: 930px; }
+  .colhead { position: absolute; top: 0; font-size: 14px; font-weight: 700; letter-spacing: .04em; transform: translateX(-50%); }
+  .rowhead { position: absolute; left: 0; width: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-weight: 700; font-size: 14px; line-height: 1.25; }
+  .rowhead small { font-weight: 500; font-size: 12.5px; }
+  .box { position: absolute; transform: translate(-50%, -50%); width: 158px; min-height: 58px; padding: 7px 8px; border: 1.3px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 12px; line-height: 1.3; z-index: 2; }
+  .box .t { position: absolute; top: -9px; right: -9px; width: 18px; height: 18px; border-radius: 50%; background: #2f8f5b; color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; border: 2px solid #fff; }
+  .box .t.p { background: #c9892b; }
+  svg.wires { position: absolute; inset: 0; z-index: 1; overflow: visible; }
+  .legend { display: flex; gap: 22px; margin-top: 14px; font-size: 12.5px; color: var(--muted); align-items: center; flex-wrap: wrap; }
+  .legend i { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; color: #fff; font-style: normal; font-size: 10px; font-weight: 700; margin-right: 6px; vertical-align: -3px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 12.5px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #e6e6e6; vertical-align: top; }
+  th { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  td.ok { color: #2f8f5b; font-weight: 700; white-space: nowrap; }
+  td.pend { color: #b06f12; font-weight: 700; white-space: nowrap; }
+  h2 { font-size: 15px; margin: 26px 0 0; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="card">
+    <h1>🎙️ PODCAST RADAR — COMPONENTS MAP (FINAL)</h1>
+    <p class="sub">Weekly guest · topic · sponsor brief for Aditya across Indian startup podcasts. Final map: only components tested live on production (https://podcast-ecosystem-radar.vercel.app) and the real services, 11–12 Oct 2026.</p>
+    <div class="board" id="board">
+      <svg class="wires" id="wires"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:#2f8f5b">✓</i>Tested live and working</span>
+      <span>· · · ▸ data / control flow</span>
+    </div>
+
+    <h2>Component list &amp; live test evidence</h2>
+    <table>
+      <thead><tr><th>#</th><th>Component</th><th>Role</th><th>Free-tier service</th><th>Live test (11 Oct 2026)</th><th>Result</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+<script>
+  // ---------- grid
+  const COLS = { TRIGGER: 300, INPUT: 505, CONTEXT: 735, PROCESSING: 1000, OUTPUT: 1300 };
+  const COL_LINES = [205, 405, 610, 860, 1150, 1440];
+  const ROWS = [
+    { key: "aditya", label: "ADITYA", sub: "(Host · only user)", y: 105 },
+    { key: "sched", label: "SCHEDULER", sub: "(Vercel Cron)", y: 220 },
+    { key: "app", label: "RADAR APP", sub: "(Next.js on Vercel)", y: 340 },
+    { key: "src", label: "PODCAST SOURCES", sub: "(RSS · YouTube API ·<br>Spotify via RapidAPI)", y: 460 },
+    { key: "ctx", label: "APPLE + NEWS", sub: "(Podcast lookup ·<br>Inc42/YourStory/Entrackr)", y: 570 },
+    { key: "gem", label: "GEMINI FLASH", sub: "(LLM)", y: 690 },
+    { key: "db", label: "SUPABASE", sub: "(Database + Auth)", y: 820 },
+  ];
+  const ROW_LINES = [45, 160, 280, 400, 515, 625, 755, 890];
+
+  // ---------- boxes [id, x, y, text, status]
+  const B = [
+    ["a1", COLS.TRIGGER, 105, "Opens the brief link<br>(new issue every Monday)", "ok"],
+    ["a2", COLS.INPUT, 105, "Adds / edits shows on the open link<br>(Apple · YouTube · Spotify search)", "ok"],
+    ["a3", COLS.OUTPUT, 105, "Reads guests, topics &amp; sponsors · copies drafts", "ok"],
+    ["s1", COLS.TRIGGER, 220, "Daily 07:15 IST cron · builds Monday's brief", "ok"],
+    ["r1", 680, 340, "Loads active shows &amp; checkpoints", "ok"],
+    ["r2", 935, 340, "Merges &amp; dedupes episodes (RSS / YouTube / Spotify)", "ok"],
+    ["r3", 1080, 340, "Rules + ranking · founders-only guardrail", "ok"],
+    ["r4", COLS.OUTPUT, 340, "Shows the brief with evidence links", "ok"],
+    ["p1", COLS.INPUT, 460, "Returns new episodes, show notes &amp; descriptions", "ok"],
+    ["n1", COLS.INPUT, 570, "Finds official RSS feed · Indian startup headlines", "ok"],
+    ["g1", 935, 690, "Extracts guests, topics &amp; brands from text", "ok"],
+    ["g3", COLS.OUTPUT, 690, "Writes cited brief copy &amp; drafts", "ok"],
+    ["d1", COLS.CONTEXT, 820, "Stores episodes, evidence, jobs &amp; frozen weekly snapshot · magic-link auth · RLS", "ok"],
+  ];
+
+  // ---------- wires [from, to, fromSide, toSide]
+  const W = [
+    ["a1", "a2", "r", "l"], ["a2", "r1", "b", "t"], ["s1", "r1", "r", "l"], ["r1", "p1", "l", "t"],
+    ["p1", "r2", "r", "b"], ["n1", "r2", "r", "b"], ["r1", "d1", "b", "t"], ["r2", "g1", "b", "t"],
+    ["g1", "r3", "r", "b"], ["r3", "g3", "r", "t"], ["g3", "d1", "b", "r"],
+    ["d1", "r4", "r", "b"], ["r4", "a3", "t", "b"], ["a1", "r4", "t", "t"],
+  ];
+
+  const board = document.getElementById("board");
+  const svg = document.getElementById("wires");
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  svg.setAttribute("viewBox", "0 0 1440 930");
+  svg.setAttribute("width", 1440); svg.setAttribute("height", 930);
+  const defs = el("defs", {});
+  const mk = el("marker", { id: "arr", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" });
+  mk.appendChild(el("path", { d: "M0,0 L10,5 L0,10 z", fill: "#2b2b2b" }));
+  defs.appendChild(mk); svg.appendChild(defs);
+
+  // grid lines + headers
+  for (const [name, x] of Object.entries(COLS)) {
+    const h = document.createElement("div"); h.className = "colhead"; h.textContent = name; h.style.left = x + "px"; board.appendChild(h);
+  }
+  COL_LINES.forEach((x, i) => svg.appendChild(el("line", { x1: x, y1: i === 0 ? 0 : 12, x2: x, y2: 890, stroke: "#cfcfcf", "stroke-dasharray": i === 0 || i === COL_LINES.length - 1 ? "" : "2 3" })));
+  const heads = [[205, 255], [345, 420], [585, 640], [830, 905], [1095, 1245]];
+  COL_LINES.slice(1, 5).forEach((x) => svg.appendChild(el("circle", { cx: x, cy: 8, r: 3.5, fill: "#5f8f78" })));
+  [[345, 440], [560, 655], [800, 920], [1080, 1255]].forEach(([a, b]) => svg.appendChild(el("line", { x1: a, y1: 8, x2: b, y2: 8, stroke: "#9a9a9a", "stroke-dasharray": "2 3" })));
+  void heads;
+  svg.appendChild(el("rect", { x: 40, y: 45, width: 1400, height: 845, fill: "none", stroke: "#2b2b2b", "stroke-width": 1 }));
+  ROW_LINES.slice(1, -1).forEach((y) => svg.appendChild(el("line", { x1: 40, y1: y, x2: 1440, y2: y, stroke: "#2b2b2b", "stroke-width": .8 })));
+  svg.appendChild(el("line", { x1: 205, y1: 45, x2: 205, y2: 890, stroke: "#2b2b2b", "stroke-width": .8 }));
+  ROWS.forEach((r, i) => {
+    const d = document.createElement("div"); d.className = "rowhead";
+    d.style.left = "45px"; d.style.top = ROW_LINES[i] + "px"; d.style.height = (ROW_LINES[i + 1] - ROW_LINES[i]) + "px";
+    d.innerHTML = `${r.label}<small>${r.sub}</small>`; board.appendChild(d);
+  });
+
+  // boxes
+  const pos = {};
+  for (const [id, x, y, html, st] of B) {
+    const d = document.createElement("div"); d.className = "box"; d.id = id;
+    d.style.left = x + "px"; d.style.top = y + "px";
+    if (["r2", "r3", "g1"].includes(id)) d.style.width = "132px";
+    d.innerHTML = html + `<span class="t ${st === "p" ? "p" : ""}">${st === "p" ? "!" : "✓"}</span>`;
+    board.appendChild(d);
+  }
+  requestAnimationFrame(() => {
+    for (const [id] of B) {
+      const e = document.getElementById(id);
+      const w = e.offsetWidth, h = e.offsetHeight, x = parseFloat(e.style.left), y = parseFloat(e.style.top);
+      pos[id] = { l: [x - w / 2, y], r: [x + w / 2, y], t: [x, y - h / 2], b: [x, y + h / 2] };
+    }
+    for (const [f, t, fs, ts] of W) {
+      const [x1, y1] = pos[f][fs], [x2, y2] = pos[t][ts];
+      let d;
+      if ((fs === "r" || fs === "l") && (ts === "l" || ts === "r")) { const mx = (x1 + x2) / 2; d = `M${x1},${y1} H${mx} V${y2} H${x2}`; }
+      else if ((fs === "b" || fs === "t") && (ts === "t" || ts === "b")) {
+        if (fs === "t" && ts === "t") { const yy = Math.min(y1, y2) - 22; d = `M${x1},${y1} V${yy} H${x2} V${y2}`; }
+        else { const my = (y1 + y2) / 2; d = `M${x1},${y1} V${my} H${x2} V${y2}`; }
+      }
+      else if (fs === "r" || fs === "l") d = `M${x1},${y1} H${x2} V${y2}`;
+      else d = `M${x1},${y1} V${y2} H${x2}`;
+      svg.appendChild(el("path", { d, fill: "none", stroke: "#2b2b2b", "stroke-width": 1.1, "stroke-dasharray": "2.5 3", "marker-end": "url(#arr)" }));
+      svg.appendChild(el("circle", { cx: x1, cy: y1, r: 3.3, fill: "#5f8f78" }));
+    }
+  });
+
+  // component list + evidence
+  const T = [
+    ["Aditya (host)", "Anyone with the open link — views the brief, adds/edits shows, copies drafts", "—", "Production pages /, /guests, /topics, /sponsors, /reports, /settings, /login + 3 detail pages", "200 · open view + edit"],
+    ["Scheduler — Vercel Cron", "Daily 07:15 IST: keeps DB awake + builds Monday's brief", "Vercel Hobby cron", "No secret → 401; with CRON_SECRET → 200 keep-alive (brief already ready)", "200"],
+    ["Radar app", "Pages, APIs, auth gate, Settings", "Next.js 16 on Vercel Hobby", "/api/health: DB reachable, 6/6 integrations configured; writes return 401 when signed out", "PASS"],
+    ["Merge / dedupe + rules + ranking", "Episode merge, sponsor classifier, metrics", "TypeScript (in app)", "72 unit + 6 integration tests; live Issue 1 built (54 episodes, 43 guests, 10 brands)", "PASS"],
+    ["RSS feeds (9 active shows)", "Episodes, show notes, MP3 enclosures", "Public RSS", "The Neon Show: 398 items, latest 09 Oct 2026, audio enclosure present", "PASS"],
+    ["YouTube Data API v3", "Video-first episodes, descriptions, public stats", "Google Cloud free quota", "Founder Thesis channel: 10 uploads in 14 days, 3 units (+ Settings channel search)", "PASS"],
+    ["Spotify Scraper (RapidAPI)", "Secondary descriptions", "RapidAPI BASIC $0 (150/mo)", "/v1/podcast/episodes?showId: 100 episodes with descriptions, 1 request (+ Settings search)", "PASS"],
+    ["Apple Podcasts lookup", "Show name → official RSS + artwork", "iTunes Search (no key)", "'Founder Thesis' → feeds.zencastr.com/f/mbqvPYFP.rss", "PASS"],
+    ["Indian startup news", "Context for topics", "Inc42 / YourStory / Entrackr RSS", "24 / 20 / 50 headlines fetched", "PASS"],
+    ["Gemini Flash", "Guests, topics, brands; brief copy; drafts", "AI Studio free tier", "Structured JSON call OK (fell back 3.6 → 3.7 Flash during Google 503)", "PASS"],
+    ["Weekly source discovery", "Finds missing YouTube channels / Spotify shows, accepts only if episodes match the RSS feed", "YouTube search + Spotify Scraper", "12 Oct run: 7 sources found & verified (Prime VP, Indian Startup Show, Neon, Z47) — 2–5 matching episodes each", "PASS"],
+    ["Founders-only guardrail", "Guests = Indian startup founders only; topics only from in-scope episodes", "Rules + Gemini labels", "Live Guests page: non-founders (e.g. cricketer) removed; 15 founders listed", "PASS"],
+    ["Pipeline health per show", "Episodes found vs analysed, newest episode, last fetch", "Supabase + Settings page", "Settings shows 📥 found · 🧠 analysed · 🕒 newest · 🔄 fetched for all shows", "PASS"],
+    ["Supabase", "Postgres + magic-link auth + RLS", "Supabase Free", "Anonymous key reads 0 rows from podcasts/reports/drafts/episodes; data present", "PASS"],
+  ];
+  document.getElementById("rows").innerHTML = T.map((r, i) => `<tr><td>${i + 1}</td><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td class="${r[4] === "PENDING" ? "pend" : "ok"}">${r[4]}</td></tr>`).join("");
+</script>
+</body>
+</html>
