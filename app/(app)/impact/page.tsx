@@ -11,16 +11,19 @@ export default async function ImpactPage() {
     <div className="page directory">
       <header className="page-header">
         <p className="eyebrow">Impact · last 30 days</p>
-        <h1>What the radar turned into 📈</h1>
-        <p>Hours saved by the weekly scan, and what happened to every guest invite and sponsor pitch. Mark a status and the numbers update instantly.</p>
+        <h1>Where to focus this week</h1>
+        <p>The brief points at three things: who to book, what to put in the content calendar, and which sponsors to pitch. Track each one here and the numbers update instantly.</p>
       </header>
       {s ? (
         <ImpactTracker
           episodesAnalysed={impact.episodesAnalysed}
           hoursSaved={impact.hoursSaved}
           initial={impact.statuses}
-          guests={s.guests.slice(0, 20).map((g) => ({ id: g.id, name: g.name, sub: [g.role, g.company].filter(Boolean).join(" · ") || g.shows.join(", "), href: `/guests/${g.id}` }))}
-          sponsors={[...s.sponsors, ...s.otherBrands].slice(0, 12).map((b) => ({ id: b.id, name: b.name, sub: b.shows.join(", "), href: `/sponsors/${b.id}` }))}
+          rows={{
+            outreach: s.guests.slice(0, 20).map((g) => ({ id: g.id, name: g.name, sub: [g.role, g.company].filter(Boolean).join(" · ") || g.shows.join(", "), href: `/guests/${g.id}` })),
+            topic: s.topics.slice(0, 12).map((t) => ({ id: t.id, name: t.name, sub: `${t.episodes} episodes · ${t.distinctShows} shows · ${t.change === null ? "new this week" : `${t.change > 0 ? "+" : ""}${Math.round(t.change * 100)}% vs last week`}`, href: `/topics/${t.id}` })),
+            pitch: [...s.sponsors, ...s.otherBrands].slice(0, 12).map((b) => ({ id: b.id, name: b.name, sub: `${b.confirmed ? "Confirmed sponsor" : "Featured brand"} · ${b.shows.join(", ")}`, href: `/sponsors/${b.id}` })),
+          }}
         />
       ) : (
         <EmptyState title="No brief yet">Impact appears after the first weekly scan.</EmptyState>

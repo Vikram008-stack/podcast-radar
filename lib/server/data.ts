@@ -135,7 +135,7 @@ export type Impact = {
   outreach: Record<"draft" | "sent" | "replied" | "booked" | "declined", number>;
   pitches: Record<"draft" | "sent" | "replied" | "booked" | "declined", number>;
   /** status per draft, key = `${kind}:${targetId}` */
-  statuses: Record<string, "draft" | "sent" | "replied" | "booked" | "declined">;
+  statuses: Record<string, string>;
 };
 
 /** Impact over the last 30 days: work the radar did + what happened to outreach (Aditya's own tracking). */
@@ -151,7 +151,7 @@ export async function getImpact(): Promise<Impact> {
   const pitches = blank();
   const statuses: Impact["statuses"] = {};
   for (const d of (drafts.data ?? []) as { kind: string; status: keyof ReturnType<typeof blank>; target_id: string }[]) {
-    (d.kind === "pitch" ? pitches : outreach)[d.status ?? "draft"]++;
+    if (d.kind !== "topic" && d.status in outreach) (d.kind === "pitch" ? pitches : outreach)[d.status ?? "draft"]++;
     statuses[`${d.kind}:${d.target_id}`] = d.status ?? "draft";
   }
   const episodesAnalysed = eps.count ?? 0;
