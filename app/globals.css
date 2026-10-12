@@ -518,3 +518,15 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 .funnel { display: flex; flex-wrap: wrap; gap: 6px; }
 .funnel span { padding: 5px 10px; border-radius: 999px; background: #f2f5f0; color: var(--sage-deep); font-size: 12px; font-weight: 600; }
 .funnel strong { color: var(--ink); }
+
+/* Impact: three vertical tables */
+.impact-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 16px; align-items: start; }
+.impact-col { padding: 18px; }
+.impact-col h2 { font-size: 18px; }
+.impact-col-head { display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
+.impact-col-head p { font-size: 12px !important; }
+.impact-scroll { max-height: 520px; overflow-y: auto; margin-right: -6px; padding-right: 6px; }
+.impact-col .track-row { flex-direction: column; align-items: flex-start; gap: 6px; padding: 9px 0; }
+.impact-col .status-track { gap: 4px; }
+.impact-col .status-track button { padding: 3px 8px; font-size: 11px; }
+@media (max-width: 1100px) { .impact-cols { grid-template-columns: 1fr; } .impact-scroll { max-height: none; } }

@@ -103,9 +103,10 @@ export function ImpactTracker({
         ))}
       </div>
 
+      <div className="impact-cols">
       {SECTIONS.map((sec) => (
-        <section key={sec.kind} id={sec.anchor} className="panel" style={{ marginTop: 16 }}>
-          <div className="panel-top" style={{ alignItems: "flex-end", flexWrap: "wrap" }}>
+        <section key={sec.kind} id={sec.anchor} className="panel impact-col">
+          <div className="impact-col-head">
             <div>
               <h2>{sec.title}</h2>
               <p style={{ margin: "4px 0 0", color: "var(--muted)", fontSize: 13 }}>{sec.why}</p>
@@ -118,6 +119,7 @@ export function ImpactTracker({
               ))}
             </div>
           </div>
+          <div className="impact-scroll">
           {rows[sec.kind].length === 0 ? <p style={{ color: "var(--muted)", fontSize: 13 }}>Nothing in this week&apos;s brief yet.</p> : null}
           {rows[sec.kind].map((r) => {
             const s = status[`${sec.kind}:${r.id}`] ?? "draft";
@@ -137,8 +139,10 @@ export function ImpactTracker({
               </div>
             );
           })}
+          </div>
         </section>
       ))}
+      </div>
       <p style={{ color: "var(--muted)", fontSize: 12, marginTop: 12 }}>
         Click a status to record it, click again to undo. Open a name to copy the ready-made email, DM or SWOT. {msg ? `(${msg})` : ""}
       </p>
