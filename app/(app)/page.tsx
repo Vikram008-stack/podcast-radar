@@ -64,8 +64,8 @@ export default async function Home() {
       href: `/sponsors/${b.id}`,
       rank: i + 1,
       name: b.name,
-      sub: `${b.shows.join(", ")}${b.latestPlacement ? ` · latest ${formatIstShort(b.latestPlacement)}` : ""}`,
-      cols: [["Sponsor", String(b.confirmed)], ["Promotion", String(b.affiliate)], ["Featured brand", String(b.probable)]],
+      sub: `${b.distinctShows === 1 ? "1 show" : `${b.distinctShows} shows`}: ${b.shows.join(", ")}${b.latestPlacement ? ` · latest ${formatIstShort(b.latestPlacement)}` : ""}`,
+      cols: [["Sponsored episodes", String(b.confirmed)], ["Promotion episodes", String(b.affiliate)], ["Featured episodes", String(b.probable)]],
       search: `${b.name} ${b.shows.join(" ")}`.toLowerCase(),
     })),
   };
@@ -100,7 +100,7 @@ export default async function Home() {
           </div>
         </div>
         <aside className="glance" aria-label="This week at a glance">
-          <p className="eyebrow" style={{ margin: 0 }}>✨ This week at a glance</p>
+          <p className="eyebrow" style={{ margin: 0 }}>This week at a glance</p>
           {[
             [<Mic key="m" size={17} strokeWidth={1.8} />, "Top founder", picks.guests[0]?.name, picks.guests[0] ? `/guests/${picks.guests[0].id}` : "/guests", picks.guests[0]?.company],
             [<Flame key="f" size={17} strokeWidth={1.8} />, "Hot topic", picks.topics[0]?.name, picks.topics[0] ? `/topics/${picks.topics[0].id}` : "/topics", picks.topics[0] ? `${picks.topics[0].distinctShows} shows · ${picks.topics[0].episodes} episodes` : null],
