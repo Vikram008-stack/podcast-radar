@@ -3,13 +3,13 @@ import { EmptySlot, GuestCard, OpportunityBanner, SponsorCard, StatusBars, Topic
 import { SignalsTable, type SignalRow } from "@/components/signals-table";
 import { Badge, Button, EmptyState, RankingMethod, SectionTitle } from "@/components/ui";
 import { topPicks } from "@/lib/top-picks";
-import { getReport } from "@/lib/server/data";
+import { getImpact, getReport } from "@/lib/server/data";
 import { formatIstDate, formatIstShort, formatIstWeekday, formatRange, istParts } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const report = await getReport();
+  const [report, impact] = await Promise.all([getReport(), getImpact()]);
   if (!report?.snapshot) {
     return (
       <div className="page">
@@ -186,6 +186,19 @@ export default async function Home() {
       <section className="content-section overview">
         <SectionTitle eyebrow="Everything we saw" title="All ranked signals" sub={`${s.stats.episodesIn30d} episodes · ${s.stats.newsArticles} Indian startup news articles · ${s.stats.aiCalls} Gemini calls`} />
         <SignalsTable rows={rows} />
+        <div className="panel" style={{ marginTop: 16 }}>
+          <p className="eyebrow">📈 Impact · last 30 days</p>
+          <div className="impact">
+            <div><strong>{impact.episodesAnalysed}</strong><small>episodes analysed for you</small></div>
+            <div><strong>~{impact.hoursSaved}h</strong><small>manual research saved (≈6 min / episode)</small></div>
+            <div><strong>{impact.outreach.sent + impact.outreach.replied + impact.outreach.booked + impact.outreach.declined}</strong><small>guest emails / DMs sent</small></div>
+            <div><strong>{impact.outreach.replied + impact.outreach.booked}</strong><small>guest replies</small></div>
+            <div><strong>{impact.outreach.booked}</strong><small>🎉 guests booked</small></div>
+            <div><strong>{impact.pitches.sent + impact.pitches.replied + impact.pitches.booked}</strong><small>sponsor pitches sent</small></div>
+            <div><strong>{impact.pitches.booked}</strong><small>sponsors signed</small></div>
+          </div>
+          <small style={{ color: "var(--muted)", fontSize: 12 }}>Mark each draft Sent / Replied / Booked on the guest or sponsor page — these numbers update instantly.</small>
+        </div>
         {s.notes.length ? (
           <div className="panel" style={{ marginTop: 16 }}>
             <p className="eyebrow">Run notes</p>

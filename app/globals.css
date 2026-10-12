@@ -479,3 +479,13 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 
 .paused-note { display: block; margin: 8px 0 0 56px; padding: 6px 10px; border-radius: 10px; background: #f6f3ee; color: #5f5a62; font-size: 12px; line-height: 1.5; }
 @media (max-width: 760px) { .paused-note { margin-left: 0; } }
+
+/* outreach status tracker */
+.status-track { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0 10px; }
+.status-track small { color: var(--muted); font-size: 12px; margin-right: 2px; }
+.status-track button { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 12px; font-weight: 600; color: var(--muted); }
+.status-track button.on { background: var(--sage); border-color: #cfdccb; color: var(--sage-deep); }
+.impact { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 10px; }
+.impact div { padding: 12px; border-radius: 12px; background: #f6f3ee; }
+.impact strong { display: block; font-size: 22px; letter-spacing: -.03em; }
+.impact small { color: var(--muted); font-size: 12px; }

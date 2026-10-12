@@ -99,8 +99,8 @@ export async function getDraft(kind: "outreach" | "pitch", targetId: string) {
   const user = await currentUser();
   if (!user && !publicEdit()) return null;
   const { sb, owner } = await reader();
-  const { data } = await sb.from("drafts").select("subject,body,updated_at,generated_by").eq("owner_id", owner).eq("kind", kind).eq("target_id", targetId).maybeSingle();
-  return data as { subject: string; body: string; updated_at: string; generated_by: string | null } | null;
+  const { data } = await sb.from("drafts").select("subject,body,updated_at,generated_by,status").eq("owner_id", owner).eq("kind", kind).eq("target_id", targetId).maybeSingle();
+  return data as { subject: string; body: string; updated_at: string; generated_by: string | null; status: string } | null;
 }
 
 /** Settings page data (view-only for public viewers). */
@@ -127,4 +127,28 @@ export async function getSettingsData() {
     if (!h.newest || e.published_at > h.newest) h.newest = e.published_at;
   }
   return { pods: (pods.data ?? []).map((p) => ({ ...p, health: health[p.id] ?? { found: 0, processed: 0, newest: null } })), settings: settings.data, jobs: jobs.data ?? [] };
+}
+
+export type Impact = {
+  episodesAnalysed: number;
+  hoursSaved: number;
+  outreach: Record<"draft" | "sent" | "replied" | "booked" | "declined", number>;
+  pitches: Record<"draft" | "sent" | "replied" | "booked" | "declined", number>;
+};
+
+/** Impact over the last 30 days: work the radar did + what happened to outreach (Aditya's own tracking). */
+export async function getImpact(): Promise<Impact> {
+  const { sb, owner } = await reader();
+  const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
+  const [eps, drafts] = await Promise.all([
+    sb.from("episodes").select("id", { count: "exact", head: true }).eq("owner_id", owner).eq("is_sample", false).eq("extraction_status", "done").gte("published_at", since),
+    sb.from("drafts").select("kind,status").eq("owner_id", owner),
+  ]);
+  const blank = () => ({ draft: 0, sent: 0, replied: 0, booked: 0, declined: 0 });
+  const outreach = blank();
+  const pitches = blank();
+  for (const d of (drafts.data ?? []) as { kind: string; status: keyof ReturnType<typeof blank> }[]) (d.kind === "pitch" ? pitches : outreach)[d.status ?? "draft"]++;
+  const episodesAnalysed = eps.count ?? 0;
+  // ~6 min per episode to skim notes for guests, topics and sponsors by hand
+  return { episodesAnalysed, hoursSaved: Math.round((episodesAnalysed * 6) / 6) / 10, outreach, pitches };
 }

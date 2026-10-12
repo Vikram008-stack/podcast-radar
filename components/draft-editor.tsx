@@ -4,7 +4,14 @@ import { Check, Copy, RefreshCw, Save, Sparkles } from "lucide-react";
 import { useState } from "react";
 import type { DraftTemplate } from "@/lib/outreach-templates";
 
-type Draft = { subject: string; body: string; updated_at?: string } | null;
+type Draft = { subject: string; body: string; updated_at?: string; status?: string } | null;
+const STATUSES = [
+  ["draft", "📝 Draft"],
+  ["sent", "📤 Sent"],
+  ["replied", "💬 Replied"],
+  ["booked", "🎉 Booked"],
+  ["declined", "🙅 Declined"],
+] as const;
 
 /** Editable AI draft. Never sent anywhere — Save keeps it, Copy puts it on the clipboard. */
 export function DraftEditor({ endpoint, reportId, initial, kind, templates = [] }: { endpoint: string; reportId: string; initial: Draft; kind: "outreach" | "pitch"; templates?: DraftTemplate[] }) {
@@ -15,6 +22,18 @@ export function DraftEditor({ endpoint, reportId, initial, kind, templates = [] 
   const [busy, setBusy] = useState<"gen" | "save" | null>(null);
   const [msg, setMsg] = useState<string | null>(initial?.updated_at ? "Saved draft loaded" : null);
   const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState(initial?.status ?? "draft");
+
+  async function mark(next: string) {
+    setStatus(next);
+    try {
+      const res = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "status", reportId, status: next }) });
+      if (!res.ok) throw new Error();
+      setMsg(`Marked as ${next} — counted in Impact`);
+    } catch {
+      setMsg("Could not save the status");
+    }
+  }
 
   async function call(action: "generate" | "save") {
     setBusy(action === "generate" ? "gen" : "save");
@@ -102,6 +121,14 @@ export function DraftEditor({ endpoint, reportId, initial, kind, templates = [] 
         <button className="button soft sm" onClick={copy} disabled={empty}>
           {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? "Copied" : "Copy"}
         </button>
+      </div>
+      <div className="status-track" role="group" aria-label="Outreach status">
+        <small>Track it:</small>
+        {STATUSES.map(([k, label]) => (
+          <button key={k} className={status === k ? "on" : ""} onClick={() => mark(k)} aria-pressed={status === k}>
+            {label}
+          </button>
+        ))}
       </div>
       {msg ? <small style={{ color: "var(--muted)", fontSize: 12 }} role="status">{msg}</small> : null}
     </div>

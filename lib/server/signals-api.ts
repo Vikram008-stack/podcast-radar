@@ -41,6 +41,7 @@ export async function getSignal(req: NextRequest, kind: Kind, id: string) {
 const draftBody = z.discriminatedUnion("action", [
   z.object({ action: z.literal("generate"), reportId: z.string().uuid().optional() }),
   z.object({ action: z.literal("save"), reportId: z.string().uuid().optional(), subject: z.string().max(200), body: z.string().max(5000) }),
+  z.object({ action: z.literal("status"), reportId: z.string().uuid().optional(), status: z.enum(["draft", "sent", "replied", "booked", "declined"]) }),
 ]);
 
 /** POST draft: { action: "generate" } (AI, rate-limited) or { action: "save", subject, body }. */
@@ -50,11 +51,20 @@ export async function draftRoute(req: NextRequest, kind: "outreach" | "pitch", i
   const parsed = draftBody.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return apiError(400, "bad_request", "Invalid draft request");
   const sb = user.sb;
+  if (parsed.data.action === "status") {
+    const { data, error } = await sb
+      .from("drafts")
+      .upsert({ owner_id: user.id, kind, target_id: id, status: parsed.data.status, status_at: new Date().toISOString(), updated_at: new Date().toISOString() }, { onConflict: "owner_id,kind,target_id" })
+      .select("subject,body,updated_at,status")
+      .single();
+    if (error) return apiError(500, "db_error", "Could not save the status");
+    return NextResponse.json({ draft: data });
+  }
   if (parsed.data.action === "save") {
     const { data, error } = await sb
       .from("drafts")
       .upsert({ owner_id: user.id, kind, target_id: id, subject: parsed.data.subject, body: parsed.data.body, updated_at: new Date().toISOString() }, { onConflict: "owner_id,kind,target_id" })
-      .select("subject,body,updated_at")
+      .select("subject,body,updated_at,status")
       .single();
     if (error) return apiError(500, "db_error", "Could not save the draft");
     return NextResponse.json({ draft: data });
