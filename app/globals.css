@@ -501,3 +501,17 @@ textarea.field { height: auto; padding: 12px; line-height: 1.6; resize: vertical
 .track-name small { display: block; color: var(--muted); font-size: 12px; }
 .track-name:hover strong { text-decoration: underline; text-decoration-color: #cfc2d8; }
 .track-row .status-track { margin: 0; }
+
+/* compact hero + at-a-glance panel */
+.hero.compact { min-height: 0; padding: 30px 40px; gap: 32px; align-items: center; }
+.hero.compact h1 { margin: 14px 0 10px; font-size: clamp(36px, 4.2vw, 56px); }
+.hero.compact .report-meta { margin-top: 16px; }
+.glance { position: relative; z-index: 2; flex: 0 1 380px; display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 18px; background: #fffefad9; border: 1px solid #ffffffbf; box-shadow: var(--shadow); }
+.glance-row { display: grid; grid-template-columns: 34px 1fr 16px; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: #f8f5fb; color: var(--ink); transition: background .2s, transform .2s; }
+.glance-row:hover { background: var(--lavender); transform: translateX(2px); }
+.glance-emoji { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: #fff; font-size: 17px; }
+.glance-row small { display: block; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.glance-row strong { display: block; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.glance-row em { display: block; font-style: normal; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 1100px) { .hero.compact { flex-direction: column; align-items: stretch; } .glance { flex-basis: auto; } }
+@media (max-width: 760px) { .hero.compact { padding: 26px 20px; } }

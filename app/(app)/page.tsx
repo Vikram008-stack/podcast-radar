@@ -72,10 +72,7 @@ export default async function Home() {
 
   return (
     <div className="page">
-      <section className="hero">
-        <span className="sticker st1" aria-hidden>🔥 hot guests</span>
-        <span className="sticker st2" aria-hidden>🎧 no cap, just data</span>
-        <span className="sticker st3" aria-hidden>✨</span>
+      <section className="hero compact">
         <div className="hero-copy">
           <div className="badge-line">
             <Badge tone="lavender">Weekly Intelligence Brief · Issue {report.version}</Badge>
@@ -102,6 +99,24 @@ export default async function Home() {
             </span>
           </div>
         </div>
+        <aside className="glance" aria-label="This week at a glance">
+          <p className="eyebrow" style={{ margin: 0 }}>✨ This week at a glance</p>
+          {[
+            ["🎙️", "Top founder", picks.guests[0]?.name, picks.guests[0] ? `/guests/${picks.guests[0].id}` : "/guests", picks.guests[0]?.company],
+            ["🔥", "Hot topic", picks.topics[0]?.name, picks.topics[0] ? `/topics/${picks.topics[0].id}` : "/topics", picks.topics[0] ? `${picks.topics[0].distinctShows} shows · ${picks.topics[0].episodes} episodes` : null],
+            ["💸", "Top brand", picks.sponsors[0]?.name, picks.sponsors[0] ? `/sponsors/${picks.sponsors[0].id}` : "/sponsors", picks.sponsors[0]?.confirmed ? "confirmed sponsor" : "featured brand"],
+          ].map(([emoji, label, name, href, sub]) => (
+            <a key={label as string} href={href as string} className="glance-row">
+              <span className="glance-emoji" aria-hidden>{emoji}</span>
+              <span style={{ minWidth: 0 }}>
+                <small>{label}</small>
+                <strong>{(name as string) ?? "—"}</strong>
+                {sub ? <em>{sub as string}</em> : null}
+              </span>
+              <ArrowRight size={14} aria-hidden />
+            </a>
+          ))}
+        </aside>
       </section>
 
       <section className="content-section overview">
