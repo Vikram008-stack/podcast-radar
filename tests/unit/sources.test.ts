@@ -40,6 +40,22 @@ describe("RSS ↔ YouTube ↔ Spotify dedupe", () => {
       ),
     ).toBe(false);
   });
+  it("merges a retitled YouTube upload by its episode code", () => {
+    expect(
+      sameEpisode(
+        { title: "Al Founder: The Right Way To Use Al To 10X Productivity | Sravanth Aluru | F0572 Raj Shamani", publishedAt: "2026-10-08T05:00:00Z" },
+        { title: "Startup Ideas, Timing & AI: How To Build The Next Big Thing | Sravanth Aluru | FO572 Raj Shamani", publishedAt: "2026-10-08T06:30:00Z" },
+      ),
+    ).toBe(true);
+  });
+  it("does not merge different episode codes even with similar titles", () => {
+    expect(
+      sameEpisode(
+        { title: "How To Build In AI | FO571 Raj Shamani", publishedAt: "2026-10-07T05:00:00Z" },
+        { title: "How To Build In AI | FO572 Raj Shamani", publishedAt: "2026-10-08T05:00:00Z" },
+      ),
+    ).toBe(false);
+  });
   it("findMatch returns the matching candidate", () => {
     const hit = findMatch(rss, [
       { title: "Something else entirely", publishedAt: rss.publishedAt },
