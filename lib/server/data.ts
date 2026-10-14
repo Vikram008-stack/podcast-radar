@@ -56,11 +56,14 @@ export async function getReport(id?: string | null): Promise<ReportRow | null> {
   return founderOnly((data as ReportRow | null) ?? null);
 }
 
-/** Guests = startup founders only (Aditya's guardrail); re-rank after filtering. */
+/** Guests = startup founders only (Aditya's guardrail); re-rank after filtering.
+ *  Sponsors are one ranked list: confirmed first, then promoted brands continue the numbering. */
 function founderOnly(r: ReportRow | null): ReportRow | null {
   if (!r?.snapshot) return r;
   const guests = r.snapshot.guests.filter(isFounderGuest).map((g, i) => ({ ...g, rank: i + 1 }));
-  return { ...r, snapshot: { ...r.snapshot, guests } };
+  const sponsors = r.snapshot.sponsors.map((b, i) => ({ ...b, rank: i + 1 }));
+  const otherBrands = r.snapshot.otherBrands.map((b, i) => ({ ...b, rank: sponsors.length + i + 1 }));
+  return { ...r, snapshot: { ...r.snapshot, guests, sponsors, otherBrands } };
 }
 
 export async function listReports(): Promise<Omit<ReportRow, "snapshot">[]> {

@@ -207,7 +207,7 @@ export function rankSponsors(f: Facts, p: Period): { sponsors: SponsorSignal[]; 
   sponsors.sort(cmp);
   others.sort((a, b) => b.distinctShows - a.distinctShows || b.affiliate + b.probable - (a.affiliate + a.probable) || cmp(a, b));
   sponsors.forEach((s, i) => (s.rank = i + 1));
-  others.forEach((s, i) => (s.rank = i + 1));
+  others.forEach((s, i) => (s.rank = sponsors.length + i + 1)); // one list: 1, 2, 3, 4…
   return { sponsors, others };
 }
 
