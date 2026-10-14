@@ -1,37 +1,34 @@
 "use client";
 
-import { Check, Copy, RefreshCw, Save, Sparkles } from "lucide-react";
+import { Check, Copy, RefreshCw, Sparkles } from "lucide-react";
 import { useState } from "react";
 import type { DraftTemplate } from "@/lib/outreach-templates";
 
 type Draft = { subject: string; body: string; updated_at?: string; status?: string } | null;
-const STATUSES = [
-  ["draft", "📝 Draft"],
-  ["sent", "📤 Sent"],
-  ["replied", "💬 Replied"],
-  ["booked", "🎉 Booked"],
-  ["declined", "🙅 Declined"],
-] as const;
-
-/** Editable AI draft. Never sent anywhere — Save keeps it, Copy puts it on the clipboard. */
+/** Editable draft. Never sent anywhere — edits save quietly on blur, Copy puts it on the clipboard. Status is tracked on the Impact page. */
 export function DraftEditor({ endpoint, reportId, initial, kind, templates = [] }: { endpoint: string; reportId: string; initial: Draft; kind: "outreach" | "pitch"; templates?: DraftTemplate[] }) {
   // Opens with the saved draft, or a ready-made template built from this page's evidence.
+  // A status-only row (no text yet) counts as no draft, so the template still shows.
+  initial = initial && (initial.subject || initial.body) ? initial : null;
   const [subject, setSubject] = useState(initial?.subject ?? templates[0]?.subject ?? "");
   const [body, setBody] = useState(initial?.body ?? templates[0]?.body ?? "");
   const [active, setActive] = useState<string | null>(initial ? null : (templates[0]?.key ?? null));
   const [busy, setBusy] = useState<"gen" | "save" | null>(null);
   const [msg, setMsg] = useState<string | null>(initial?.updated_at ? "Saved draft loaded" : null);
   const [copied, setCopied] = useState(false);
-  const [status, setStatus] = useState(initial?.status ?? "draft");
+  const [saved, setSaved] = useState(`${initial?.subject ?? ""}
+${initial?.body ?? ""}`);
 
-  async function mark(next: string) {
-    setStatus(next);
+  // Quiet autosave when a field loses focus and the text changed.
+  async function autosave() {
+    const key = `${subject}
+${body}`;
+    if (busy || key === saved || (!subject && !body)) return;
     try {
-      const res = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "status", reportId, status: next }) });
-      if (!res.ok) throw new Error();
-      setMsg(`Marked as ${next} — counted in Impact`);
+      const res = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "save", reportId, subject, body }) });
+      if (res.ok) setSaved(key);
     } catch {
-      setMsg("Could not save the status");
+      /* keep the text on screen; Copy still works */
     }
   }
 
@@ -48,6 +45,8 @@ export function DraftEditor({ endpoint, reportId, initial, kind, templates = [] 
       if (!res.ok) throw new Error(j?.error?.message ?? "Request failed");
       setSubject(j.draft.subject);
       setBody(j.draft.body);
+      setSaved(`${j.draft.subject}
+${j.draft.body}`);
       setMsg(action === "generate" ? "New draft generated — edit freely" : "Saved");
     } catch (e) {
       setMsg(e instanceof Error ? e.message : "Something went wrong");
@@ -105,30 +104,19 @@ export function DraftEditor({ endpoint, reportId, initial, kind, templates = [] 
       ) : null}
       <label>
         Subject
-        <input className="field" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject line" />
+        <input className="field" value={subject} onChange={(e) => setSubject(e.target.value)} onBlur={autosave} placeholder="Subject line" />
       </label>
       <label>
         Message
-        <textarea className="field" rows={11} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Draft body" />
+        <textarea className="field" rows={11} value={body} onChange={(e) => setBody(e.target.value)} onBlur={autosave} placeholder="Draft body" />
       </label>
       <div className="draft-actions">
         <button className="button primary sm" onClick={() => call("generate")} disabled={!!busy}>
           <RefreshCw size={13} className={busy === "gen" ? "spin" : ""} /> {busy === "gen" ? "Writing…" : "Rewrite with AI"}
         </button>
-        <button className="button soft sm" onClick={() => call("save")} disabled={!!busy || empty}>
-          <Save size={13} /> {busy === "save" ? "Saving…" : "Save"}
-        </button>
         <button className="button soft sm" onClick={copy} disabled={empty}>
           {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? "Copied" : "Copy"}
         </button>
-      </div>
-      <div className="status-track" role="group" aria-label="Outreach status">
-        <small>Track it:</small>
-        {STATUSES.map(([k, label]) => (
-          <button key={k} className={status === k ? "on" : ""} onClick={() => mark(k)} aria-pressed={status === k}>
-            {label}
-          </button>
-        ))}
       </div>
       {msg ? <small style={{ color: "var(--muted)", fontSize: 12 }} role="status">{msg}</small> : null}
     </div>
