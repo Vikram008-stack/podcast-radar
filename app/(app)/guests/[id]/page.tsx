@@ -80,13 +80,12 @@ export default async function GuestDetail({ params, searchParams }: { params: Pr
           <section className="panel">
             <div className="panel-top">
               <h2>Talking points</h2>
-              <AiLabel />
+              {g.talkingPoints.length ? <AiLabel /> : <ObservedLabel>From episode titles</ObservedLabel>}
             </div>
             {g.talkingPoints.length ? (
               <ClaimList claims={g.talkingPoints} sources={sources} />
             ) : (
               <>
-                <p>Starter questions built from their episode titles (AI talking points appear once Gemini has written them):</p>
                 <ul className="claim-list">
                   {g.history.slice(0, 3).map((h) => (
                     <li key={h.episode.id}>

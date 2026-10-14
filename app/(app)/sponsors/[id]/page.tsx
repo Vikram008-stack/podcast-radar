@@ -91,13 +91,15 @@ export default async function SponsorDetail({ params, searchParams }: { params: 
           </section>
         </div>
         <aside className="detail-aside">
-          <section className="panel">
-            <div className="panel-top">
-              <h2>Sponsor fit</h2>
-              <AiLabel />
-            </div>
-            {b.fit.length ? <ClaimList claims={b.fit} sources={sources} /> : <p>No AI fit note yet — it is written for the top 3 brands each week when Gemini quota allows.</p>}
-          </section>
+          {b.fit.length ? (
+            <section className="panel">
+              <div className="panel-top">
+                <h2>Sponsor fit</h2>
+                <AiLabel />
+              </div>
+              <ClaimList claims={b.fit} sources={sources} />
+            </section>
+          ) : null}
           <section className="panel sticky">
             {viewer.canEdit ? (
               <DraftEditor endpoint={`/api/sponsors/${b.id}/pitch-draft`} reportId={report.id} initial={draft} kind="pitch" templates={sponsorTemplates(b)} />

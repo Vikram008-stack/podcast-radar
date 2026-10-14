@@ -185,9 +185,7 @@ export function OpportunityBanner({ o, reportId }: { o: Opportunity; reportId?: 
           <p>
             <AiLabel /> · {o.copy.map((c) => c.claim).join(" ")}
           </p>
-        ) : (
-          <p style={{ opacity: 0.8 }}>AI copy unavailable this week — the counts above are the evidence.</p>
-        )}
+        ) : null}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 10 }}>
           {o.sources.slice(0, 3).map((s, i) => (
             <SourceLink key={`${i}-${s.url}`} href={s.url}>

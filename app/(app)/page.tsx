@@ -120,7 +120,7 @@ export default async function Home() {
       </section>
 
       <section className="content-section overview">
-        <SectionTitle eyebrow="Everything we saw" title="All ranked signals" sub={`${s.stats.episodesIn30d} episodes · ${s.stats.newsArticles} Indian startup news articles · ${s.stats.aiCalls} Gemini calls`} />
+        <SectionTitle eyebrow="Everything we saw" title="All ranked signals" sub={`${s.stats.episodesIn30d} episodes · ${s.stats.newsArticles} Indian startup news articles`} />
         <SignalsTable rows={rows} />
       </section>
 
