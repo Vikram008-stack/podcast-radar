@@ -65,7 +65,6 @@ export default async function GuestDetail({ params, searchParams }: { params: Pr
                     <EvidenceIcon type={h.evidence.type} /> {evidenceCaption(h.evidence)}: “{h.evidence.excerpt}”
                   </p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 8 }}>
-                    <SourceLink href={h.evidence.url ?? h.episode.url}>Evidence</SourceLink>
                     {(listen[h.episode.id] ?? []).map((l) => (
                       <SourceLink key={l.label} href={l.url}>
                         {l.label}
