@@ -16,14 +16,13 @@ const NAV = [
 
 export type ShellProps = {
   children: React.ReactNode;
-  scan: { status: "ok" | "partial" | "failed" | "running" | "never"; label: string; when: string };
   period: string | null;
   sample: boolean;
   initialCollapsed: boolean;
   signedIn: boolean;
 };
 
-export function Shell({ children, scan, period, sample, initialCollapsed, signedIn }: ShellProps) {
+export function Shell({ children, period, sample, initialCollapsed, signedIn }: ShellProps) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(initialCollapsed);
@@ -36,7 +35,6 @@ export function Shell({ children, scan, period, sample, initialCollapsed, signed
   };
 
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
-  const dot = scan.status === "ok" ? "" : scan.status === "partial" || scan.status === "running" ? "amber" : scan.status === "failed" ? "red" : "idle";
   const title = NAV.find((n) => active(n.href))?.label ?? (path.startsWith("/reports") ? "Reports" : "");
 
   return (
@@ -68,13 +66,6 @@ export function Shell({ children, scan, period, sample, initialCollapsed, signed
             {collapsed ? <ChevronsRight size={17} /> : <ChevronsLeft size={17} />}
             <span className="label">Collapse</span>
           </button>
-          <Link href="/settings" className="weekly-pill" title={`${scan.label} · ${scan.when}`}>
-            <span className={`pulse ${dot} ${scan.status === "running" ? "live" : ""}`} aria-hidden />
-            <span className="label-wrap">
-              <strong>{scan.label}</strong>
-              <small>{scan.when}</small>
-            </span>
-          </Link>
           <div className="me">
             <span className="avatar tone-1" style={{ width: 32, height: 32, fontSize: 12 }} aria-hidden>
               A
